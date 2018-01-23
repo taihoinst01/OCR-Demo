@@ -51,7 +51,7 @@
     <Folder Include="views\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="uploads\MUKU1151124 DG CERTI-1.jpg" />
+    <Content Include="uploads\test.jpg" />
     <Content Include="views\error.jade" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.jade" />

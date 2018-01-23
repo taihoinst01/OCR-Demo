@@ -40,8 +40,8 @@ $(document).ready(function () {
                     //status('Error: ' + xhr.status);
                 },
                 success: function (response) {
-                    //$('#img').attr('src', response);
-                    //$('#preview').attr('src', response);
+                    $('#img').attr('src', response);
+                    $('#preview').attr('src', response);
                     //if ($('#rotation').val().length > 0) {
                     processImage(response);                       
                     //}
@@ -52,7 +52,7 @@ $(document).ready(function () {
         }        
         return false;
     });
-    
+    /*
     $('#test1').click(function(){
         $('#dataForm').css('height','800px');
         processImage('http://hyjocr.azurewebsites.net/uploads/ocr01.jpg');
@@ -61,7 +61,7 @@ $(document).ready(function () {
         $('#dataForm').css('height','900px');
         processImage('http://hyjocr.azurewebsites.net/uploads/ocr02.jpg');
     });
-
+    */
     $('#insertBtn').click(function () {
         var resultJson = new Array();
         for (var i = 0; i < $('.location').length; i++) {
@@ -123,8 +123,8 @@ $(document).ready(function () {
 
 function processImage(url) {
     $('#dataForm').html('');
-    var subscriptionKey = "f2f4e2ebe5fb476e8b806b64ce383832";
-    var uriBase = "https://westus.api.cognitive.microsoft.com/vision/v1.0/ocr";
+    var subscriptionKey = "fedbc6bb74714bd78270dc8f70593122";
+    var uriBase = "https://westus.api.cognitive.microsoft.com/vision/v1.0";
 
 
     // Request parameters.
@@ -134,8 +134,8 @@ function processImage(url) {
     };
 
     // image url
-    var sourceImageUrl = url;
-    //var sourceImageUrl = 'http://hyjocr.azurewebsites.net/uploads/ocr01.jpg';
+    //var sourceImageUrl = url;
+    var sourceImageUrl = 'https://ocr-demo.azurewebsites.net/uploads/test.jpg';
 
     // Perform the REST API call.
     $.ajax({
