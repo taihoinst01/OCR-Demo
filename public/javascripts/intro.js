@@ -135,7 +135,7 @@ function processImage(url) {
 
     // image url
     //var sourceImageUrl = url;
-    var sourceImageUrl = 'https://ocr-demo.azurewebsites.net/uploads/test.jpg';
+    var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/test.jpg';
 
     // Perform the REST API call.
     $.ajax({
