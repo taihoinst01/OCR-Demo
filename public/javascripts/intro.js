@@ -124,7 +124,7 @@ $(document).ready(function () {
 function processImage(url) {
     $('#dataForm').html('');
     var subscriptionKey = "fedbc6bb74714bd78270dc8f70593122";
-    var uriBase = "https://westus.api.cognitive.microsoft.com/vision/v1.0";
+    var uriBase = "https://westus.api.cognitive.microsoft.com/vision/v1.0/ocr";
 
 
     // Request parameters.
@@ -158,6 +158,7 @@ function processImage(url) {
             //appendForm(data.regions)
             //console.log(data);
             //$("#responseTextArea").val(JSON.stringify(data, null, 2));
+            console.log(data);
             if ($('#rotation').val() == '') {
                 addTextOfLine(data.regions);
                 $('#rotation').val('0');
