@@ -37,6 +37,7 @@ $(document).ready(function () {
             $(this).ajaxSubmit({
                 error: function (xhr) {
                     console.log(xhr);
+                    console.log('local에서 확인용으로');
                     //status('Error: ' + xhr.status);
                 },
                 success: function (response) {
