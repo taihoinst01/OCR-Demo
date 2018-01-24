@@ -41,6 +41,7 @@ $(document).ready(function () {
                     //status('Error: ' + xhr.status);
                 },
                 success: function (response) {
+                    $("#formSelect").val('');
                     $('#img').attr('src', response);
                     $('#preview').attr('src', response);
                     //if ($('#rotation').val().length > 0) {
