@@ -3,7 +3,7 @@
 .floatLeft > #rotBtn > img { width: 50px; height: 50px; }
 .floatLeft2 { float: left; height: 800px; }
 .floatLeft2 > select { height: 40px; margin-top: 380px; }
-.floatLeft3 { float: left; width: 700px; height: 800px; margin: 5px; position:relative; border:1px solid #BDBDBD; padding: 3px; }
+.floatLeft3 { float: left; width: 800px; height: 900px; margin: 5px; position:relative; border:1px solid #BDBDBD; padding: 3px; }
 /*.floatLeft2 { float: left; width: 500px; height: 800px; overflow: auto; margin: 5px; }*/
 #img { width: 700px; height: 800px; z-index: 0; }
 .langRadio { margin: 5px; }

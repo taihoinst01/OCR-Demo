@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
     <link rel="stylesheet" href="/stylesheets/intro.css" />
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <script type="text/javascript" src="/javascripts/rotate.js"></script>
     <script type="text/javascript" src="/javascripts/intro.js"></script>
 </head>
 <body>
-    <br/>
+    <br />
     <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
         <input type="hidden" name="rotation" id="rotation" />
         <!--<div class ="langRadio">
@@ -22,9 +22,9 @@
             <input type="radio" name="lang" id="lang" value="zh-Hant"> 중국어
             <input type="radio" name="lang" id="lang" value="ja"> 일본어
         </div>-->
-        <input type="file" name="uploadFile" id="uploadFile" style="display:inline;"/>
+        <input type="file" name="uploadFile" id="uploadFile" style="display:inline;" />
         <!-- <input type="button" name="rotateBtn" id="rotateBtn" value="회전 적용" /> -->
-        <!-- <input type="button" name="fo``rmBtn" id="formBtn" value="form위치 보기" /> -->   
+        <!-- <input type="button" name="fo``rmBtn" id="formBtn" value="form위치 보기" /> -->
         <!--<input type="button" name="test1" id="test1" value="TEST1" /> -->
         <!--<input type="button" name="test2" id="test2" value="TEST2" /> -->
         <!--<input type="button" name="insertBtn" id="insertBtn" value="DB저장" /> -->
@@ -33,35 +33,18 @@
     <div class="floatLeft">
         <div id="rotBtn"><img class="btn-img" src="/images/rotation_icon.png" /></div>
         <!-- <img id="preview" /> -->
-        <img id="img" />
+        <img id="img"/>
     </div>
     <div class="floatLeft2">
         <select name="formSelect" id="formSelect">
             <option value="" selected>양식 선택</option>
-            <option value="미정">위험물컨테이너 수납검사증</option>
-            <option value="미정">Test</option>
+            <option value="PACKING LIST">PACKING LIST</option>
+            <option value="미정">COMMERCIAL INVOICE</option>
             <!--<option value="INVOICE">INVOICE</option>-->
             <!--<option value="TRANSACTION DETAILS">TRANSACTION DETAILS</option>-->
         </select>
     </div>
     <div class="floatLeft3" id="dataForm">
     </div>
-        <!-- <div class="floatLeft2">
-            <table id="result" class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>좌표</th>
-                        <th>텍스트</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2" align="center">대기중..</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="formResult">
-        </div> -->
 </body>
 </html>

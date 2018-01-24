@@ -30,6 +30,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="lib\fluentReports.js" />
+    <Compile Include="lib\PDFKitImportPDF.js" />
     <Compile Include="public\javascripts\intro.js" />
     <Compile Include="public\javascripts\rotate.js" />
     <Compile Include="routes\db.js" />
@@ -42,6 +44,7 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="lib\" />
     <Folder Include="uploads\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
@@ -51,7 +54,8 @@
     <Folder Include="views\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="uploads\test.jpg" />
+    <Content Include="uploads\commercial_invoice.jpg" />
+    <Content Include="uploads\packing_List.jpg" />
     <Content Include="views\error.jade" />
     <Content Include="views\index.html" />
     <Content Include="views\layout.jade" />
