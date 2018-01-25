@@ -25,3 +25,4 @@ body{background-image:url('/images/bg.png'); background-repeat: no-repeat; heigh
 .uploadBtn{background: url('/images/btd_04.png') !important;width: 18%;height: 30px;margin: 5px 2px 2px 150px;display: inline-flex;cursor: pointer;}
 .uploadInit{background: url('/images/btd_06.png') !important;width: 17%;height: 30px;margin: 5px 2px 2px 0;display: inline-flex;}
 #previewbtn{margin-top: 20px;}
+.btd_btn_result {margin: 5px 5px 5px 5px}

@@ -3,21 +3,6 @@ var resultArr; // select 선택 시 유효성 검사를 위한 text Array
 
 $(document).ready(function () {
 
-    $('#fileupload').hide();
-    $('#uploadFile').change(function () {
-        $('#rotation').val('');
-        var extArr = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
-        var uploadFile = $(this).val();
-        var lastDot = uploadFile.lastIndexOf('.');
-        var fileExt = uploadFile.substring(lastDot + 1, uploadFile.length).toLowerCase();
-        if ($.inArray(fileExt, extArr) != -1 && $(this).val() != '') {
-            $('#uploadForm').submit();
-        } else {
-            $(this).val('');            
-            alert('파일 형식이 올바르지 않습니다.');
-        }
-    });
-
     jQuery.fn.center = function () {
         this.css("position","absolute");
         this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
@@ -31,30 +16,63 @@ $(document).ready(function () {
     $('#save_btn').css("opacity","0.5");
     }
     
-    //팝업창 닫기
-   $('.popupclose').click(function(){
-       $('#popLayer').hide();
-       $('#formSelect').val("1").prop("selected", true);
-       $("#uploadFile").val("");
-       //$('select').attr("disabled","disabled");
-   });
-    $('#formSelect').change(function(){
-        $('#dataForm').css("background-color",'white');
-        $('#dataForm').css("background-image",'url("")');
-    });
+    //업로드 모달
     $('#upload_btn').click(function(){
+        
         $('#formSelect').val("1").prop("selected", true);
-       // $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
-        //$('#previews').removeAttr("src");
-       // $('#img').prop("src","url(/images/box01.png)");
         $("#uploadFile").val("");
-     //   $('#dataForm').css("background-color","");
-     //   $("#dataForm").children().remove();
-        $('select').removeAttr("disabled");
-    });
-    
-    //초기화
-    $('.uploadInit').click(function(){
+        var createPopLayer = '<div id="popLayer">'
+                             +'<div id="img_uploadV" class="modal_box w600" style="height: 65%">'
+                             +'<header><a href="#"  class="js-modal-close close popupclose">×</a><h3 style="margin: 10px;">Image upload</h3></header>'
+                             +'<div class="modal-body" style=" height: 80%;"><div class="gallery_wrap"><div class="gallery"><div style=" height: 100%">'
+                             +'<form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post"><input type="hidden" name="rotation" id="rotation" />'
+                             +'<div id="fileupload"><input type="file" name="uploadFile" id="uploadFile" style="display:inline;" /></div><p>'
+                             +'<span style="width:60%;" class="fileName" id="uploadFile">(선택된 파일 없음)</span>&nbsp;<label class="uploadBtn" for="uploadFile"></label>'
+                             +'<input type="file" name="uploadFile" class="upload-hidden" id="uploadFile" accept="image/*" style="display:none;" /><a href="javascript://" class="uploadInit" ></a>'
+                             +'</p></form><p> ※Size: 500*500kb 이내</p><img id="previewPic" url=""/>'
+                             +'<img id="previews"/><div id="formResultview"><div id="previewbtn"><center><input id="save_btn" class="btd_btn_result" type="image" src="/images/btd_05.png">'
+                             +'<input  class="btd_btn_result popupclose" type="image" src="/images/btd_07.png"></center></div></div></div></div></div></div>'
+                             +'<footer><a href="#" class="confirm" id="btn_fileupload"></a><a href="#" class="cancel js-modal-close"></a></footer></div>'; 
+        $('#poplayerline').append(createPopLayer);
+        $('#fileupload').hide();
+        $('.popupclose').click(function(){
+            $('#popLayer').remove();
+            $('#formSelect').val("1").prop("selected", true);
+            $("#uploadFile").val("");
+        });  
+        $('.uploadBtn').click(function(){
+            $('#dataForm').css("background-color",'');
+            $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
+            $("#dataForm").children().remove();
+        });
+
+        $('#formSelect').change(function(){
+            $('#dataForm').css("background-color",'white');
+            $('#dataForm').css("background-image",'url("")');
+            var option = $("#formSelect option:selected").val();
+            if(option == '1')
+            {
+                $('#dataForm').css("background-color",'');
+                $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
+                $("#dataForm").children().remove();
+            }
+        });
+
+        $('#uploadFile').change(function () {
+            $('#rotation').val('');
+            var extArr = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
+            var uploadFile = $(this).val();
+            var lastDot = uploadFile.lastIndexOf('.');
+            var fileExt = uploadFile.substring(lastDot + 1, uploadFile.length).toLowerCase();
+            if ($.inArray(fileExt, extArr) != -1 && $(this).val() != '') {
+                $('#uploadForm').submit();
+            } else {
+                $(this).val('');            
+                alert('파일 형식이 올바르지 않습니다.');
+            }
+        });
+         //초기화
+     $('.uploadInit').click(function(){
         $('#uploadFile').text('선택된 파일 없음');
         $('.upload-hidden').val("");
         $('input[name=uploadFile]').val("");
@@ -89,7 +107,6 @@ $(document).ready(function () {
                     
                     $('#save_btn').click(function(){
                         $('#img').attr('src', response);
-                        $('#popLayer').hide();
                     });
                     $('#preview').attr('src', response);
                     processImage(response);                       
@@ -166,11 +183,12 @@ $(document).ready(function () {
                 var url = $('#img').attr('src');
                 processImage(url);
             } else {              
-                alert('해당 양식과 일치하지 않습니다.');
                 $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
                 $('#dataForm').css("background-color","");
                 $("#dataForm").children().remove();
-                $("#formSelect").val('');
+                $("#formSelect").val('1');
+
+                alert('해당 양식과 일치하지 않습니다.');
                 
             }    
         }
@@ -192,8 +210,8 @@ function processImage(url) {
     };
 
     // image url
-    var sourceImageUrl = url;
-    //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
+    //var sourceImageUrl = url;
+    var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
     $.ajax({
@@ -227,7 +245,7 @@ function processImage(url) {
                $('#save_btn').click(function(){
                     
                     $('#img').attr('src', sourceImageUrl);
-                    $('#popLayer').hide();
+                    $('#popLayer').remove();
                 });
                
             } else {
@@ -590,6 +608,9 @@ function makeForm(option, lineWordArr, lineLctArr) {
 
     return appendHtml;
 }
+    });
+    
+   
 /*
 function appendTable(data) {
     $('#result > tbody').html('');
