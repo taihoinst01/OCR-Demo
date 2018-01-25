@@ -2,7 +2,6 @@
 var resultArr; // select 선택 시 유효성 검사를 위한 text Array
 
 $(document).ready(function () {
-    //$('#formResult').hide();
 
     $('#uploadFile').change(function () {
         $('#rotation').val('');
