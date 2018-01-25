@@ -5,46 +5,80 @@
 
     <link rel="stylesheet" href="/stylesheets/bootstrap.min.css" />
     <link rel="stylesheet" href="/stylesheets/intro.css" />
-
+    <link rel="stylesheet" href="/stylesheets/selectbox.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
     <script type="text/javascript" src="/javascripts/rotate.js"></script>
     <script type="text/javascript" src="/javascripts/intro.js"></script>
 </head>
 <body>
-    <br />
-    <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
-        <input type="hidden" name="rotation" id="rotation" />
-        <!--<div class ="langRadio">
-            <input type="radio" name="lang" id="lang" value="unk" checked="checked"> 자동
-            <input type="radio" name="lang" id="lang" value="ko"> 한국어
-            <input type="radio" name="lang" id="lang" value="en"> 영어
-            <input type="radio" name="lang" id="lang" value="zh-Hant"> 중국어
-            <input type="radio" name="lang" id="lang" value="ja"> 일본어
-        </div>-->
-        <input type="file" name="uploadFile" id="uploadFile" style="display:inline;" />
-        <!-- <input type="button" name="rotateBtn" id="rotateBtn" value="회전 적용" /> -->
-        <!-- <input type="button" name="fo``rmBtn" id="formBtn" value="form위치 보기" /> -->
-        <!--<input type="button" name="test1" id="test1" value="TEST1" /> -->
-        <!--<input type="button" name="test2" id="test2" value="TEST2" /> -->
-        <!--<input type="button" name="insertBtn" id="insertBtn" value="DB저장" /> -->
-    </form>
-    <br />
-    <div class="floatLeft">
-        <div id="rotBtn"><img class="btn-img" src="/images/rotation_icon.png" /></div>
-        <!-- <img id="preview" /> -->
-        <img id="img"/>
-    </div>
-    <div class="floatLeft2">
-        <select name="formSelect" id="formSelect">
-            <option value="" selected>양식 선택</option>
-            <option value="PACKING LIST">PACKING LIST</option>
-            <option value="COMMERCIAL INVOICE">COMMERCIAL INVOICE</option>
-            <!--<option value="INVOICE">INVOICE</option>-->
-            <!--<option value="TRANSACTION DETAILS">TRANSACTION DETAILS</option>-->
-        </select>
-    </div>
-    <div class="floatLeft3" id="dataForm">
-    </div>
+    <br /><br/><br /><br/><br /><br/><br />
+        <div class="floatLeft">
+            <div class="topmargin">
+                <div class="fontsize">Image</div>
+                <a href="javascript:;" onclick="javascript:showPopup()">
+                   <input class="btd_icon"  id="upload_btn" type="image" src="/images/btd_01.png">
+                </a>
+            </div>
+            <!--<div id="rotBtn"><img class="btn-img" src="/images/rotation_icon.png" /></div>-->
+            <img id="img"/>
+        </div>
+       
+        <div class="ocrnamemargin">
+                <div id="ocrName" class="fontsize minimal">OCR</div>
+                <div id="selectboxmargin">
+                <select name="formSelect" id="formSelect">
+                        <option value="1" selected>양식 선택</option>
+                        <option value="PACKING LIST">PACKING LIST</option>
+                        <option value="COMMERCIAL INVOICE">COMMERCIAL INVOICE</option>
+                </select>
+            </div>
+        </div>
+        <div class="floatLeft3" id="dataForm">
+              
+        </div>    
+        <div id="popLayer" style="display:none;">         
+                <div id="img_uploadV" class="modal_box w600" style="height: 65%">
+                 <header>
+                     <a href="#"  class="js-modal-close close popupclose">×</a>
+                     <h3 style="margin: 10px;">Image upload</h3>
+                 </header>
+                 <div class="modal-body" style=" height: 80%;">
+                     <div class="gallery_wrap">
+                         <div class="gallery">
+                             <div style=" height: 100%">
+                                    <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post">
+                                        <input type="hidden" name="rotation" id="rotation" />
+                                        <div id="fileupload"><input type="file" name="uploadFile" id="uploadFile" style="display:inline;" /></div>
+                                        <p>
+                                            <span style="width:60%;" class="fileName" id="uploadFile">(선택된 파일 없음)</span>&nbsp;<label class="uploadBtn" for="uploadFile"></label>
+                                            <input type="file" name="uploadFile" class="upload-hidden" id="uploadFile" accept="image/*" style="display:none;" />
+                                            <a href="javascript://" class="uploadInit" ></a>
+                                        </p>
+                                    </form>
+                                    <p> ※Size: 500*500kb 이내</p>
+                                 <!-- 미리보기 -->
+                                    
+                                 <img id="previewPic" url=""  onerror="this.style.display='none';" />
+                                 <img id="previews"/>
+                                 <div id="formResultview">
+                                 <div id="previewbtn">
+                                 <center>
+                                 <input id="save_btn" class="btd_btn_result" type="image" src="/images/btd_05.png">
+                                 <input  class="btd_btn_result popupclose" type="image" src="/images/btd_07.png">
+                                 </center>
+                                  </div>
+                                </div> 
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <footer>
+                     <a href="#" class="confirm" id="btn_fileupload"></a>
+                     <a href="#" class="cancel js-modal-close"></a>
+                 </footer>
+         </div>
+ 
+    </body>
 </body>
 </html>

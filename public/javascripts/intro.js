@@ -3,6 +3,7 @@ var resultArr; // select 선택 시 유효성 검사를 위한 text Array
 
 $(document).ready(function () {
 
+    $('#fileupload').hide();
     $('#uploadFile').change(function () {
         $('#rotation').val('');
         var extArr = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
@@ -17,6 +18,50 @@ $(document).ready(function () {
         }
     });
 
+    jQuery.fn.center = function () {
+        this.css("position","absolute");
+        this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
+        this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+        return this;
+    }
+    showPopup = function() {
+    $("#popLayer").show();
+    $("#popLayer").center();
+    $('#save_btn').attr("disabled","disabled");
+    $('#save_btn').css("opacity","0.5");
+    }
+    
+    //팝업창 닫기
+   $('.popupclose').click(function(){
+       $('#popLayer').hide();
+       $('#formSelect').val("1").prop("selected", true);
+       $("#uploadFile").val("");
+       //$('select').attr("disabled","disabled");
+   });
+    $('#formSelect').change(function(){
+        $('#dataForm').css("background-color",'white');
+        $('#dataForm').css("background-image",'url("")');
+    });
+    $('#upload_btn').click(function(){
+        $('#formSelect').val("1").prop("selected", true);
+       // $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
+        //$('#previews').removeAttr("src");
+       // $('#img').prop("src","url(/images/box01.png)");
+        $("#uploadFile").val("");
+     //   $('#dataForm').css("background-color","");
+     //   $("#dataForm").children().remove();
+        $('select').removeAttr("disabled");
+    });
+    
+    //초기화
+    $('.uploadInit').click(function(){
+        $('#uploadFile').text('선택된 파일 없음');
+        $('.upload-hidden').val("");
+        $('input[name=uploadFile]').val("");
+        $('#save_btn').css("opacity","0.5");
+        $('#previews').removeAttr('src');
+        $('#save_btn').attr("disabled","disabled");
+    });
     /*$('#rotateBtn').click(function () {
         $('#formResult').hide();
         $('#result > tbody').html('<tr><td colspan= "2" align= "center" > 대기중..</td ></tr >');
@@ -36,21 +81,27 @@ $(document).ready(function () {
             $(this).ajaxSubmit({
                 error: function (xhr) {
                     console.log(xhr);
-                    console.log('local에서 확인용으로');
                     //status('Error: ' + xhr.status);
                 },
                 success: function (response) {
                     $("#formSelect").val('');
-                    $('#img').attr('src', response);
+                    $('#previews').attr('src', response);
+                    
+                    $('#save_btn').click(function(){
+                        $('#img').attr('src', response);
+                        $('#popLayer').hide();
+                    });
                     $('#preview').attr('src', response);
-                    //if ($('#rotation').val().length > 0) {
                     processImage(response);                       
+
+                    //if ($('#rotation').val().length > 0) {
                     //}
                 }
             });
         } else {
             alert('파일이 비어 있습니다.');
-        }        
+        }
+      
         return false;
     });
     /*
@@ -102,20 +153,25 @@ $(document).ready(function () {
     $('#rotBtn').click(function (e) {
         angleCnt++;
         var angle = 90 * (angleCnt % 4);
-        $('#img').rotate(angle);
+       $('#img').rotate(angle);
         $('#rotation').val(angle);
 
     });
 
     $('#formSelect').change(function (e) {
         var option = $("#formSelect option:selected").val();
-        if (option != '') {
+        
+        if (option != '1') {
             if (jQuery.inArray(option, resultArr) != -1) {
                 var url = $('#img').attr('src');
                 processImage(url);
             } else {              
                 alert('해당 양식과 일치하지 않습니다.');
+                $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
+                $('#dataForm').css("background-color","");
+                $("#dataForm").children().remove();
                 $("#formSelect").val('');
+                
             }    
         }
 
@@ -123,6 +179,7 @@ $(document).ready(function () {
 });
 
 function processImage(url) {
+    
     $('#dataForm').html('');
     var subscriptionKey = "fedbc6bb74714bd78270dc8f70593122";
     var uriBase = "https://westus.api.cognitive.microsoft.com/vision/v1.0/ocr";
@@ -137,7 +194,7 @@ function processImage(url) {
     // image url
     var sourceImageUrl = url;
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
-
+    //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
     $.ajax({
         url: uriBase + "?" + $.param(params),
@@ -162,7 +219,17 @@ function processImage(url) {
             if ($('#rotation').val() == '') {
                 addTextOfLine(data.regions);
                 $('#rotation').val('0');
-                $('#img').attr('src', sourceImageUrl);
+                
+                if ($('#previews').attr('src') != null) {
+                $('#save_btn').removeAttr("disabled");
+                $('#save_btn').css("opacity","1.0");
+                }
+               $('#save_btn').click(function(){
+                    
+                    $('#img').attr('src', sourceImageUrl);
+                    $('#popLayer').hide();
+                });
+               
             } else {
                 $('#rotation').val('');
                 appendDataForm(data.regions);
@@ -569,3 +636,4 @@ function appendForm(data) {
     $('#formResult').append(htmlText);
 }
 */
+
