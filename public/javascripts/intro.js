@@ -217,6 +217,7 @@ function processImage(url) {
 
     // image url
     var sourceImageUrl = url;
+    
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
