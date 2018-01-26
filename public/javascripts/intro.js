@@ -10,6 +10,7 @@ $(document).ready(function () {
         return this;
     }
     showPopup = function() {
+    $('#popLayer').fadeIn();
     $("#popLayer").show();
     $("#popLayer").center();
     $('#save_btn').attr("disabled","disabled");
@@ -27,18 +28,19 @@ $(document).ready(function () {
                              +'<div class="modal-body" style=" height: 80%;"><div class="gallery_wrap"><div class="gallery"><div style=" height: 100%">'
                              +'<form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post"><input type="hidden" name="rotation" id="rotation" />'
                              +'<div id="fileupload"><input type="file" name="uploadFile" id="uploadFile" style="display:inline;" /></div><p>'
-                             +'<span style="width:60%;" class="fileName" id="uploadFile">(선택된 파일 없음)</span>&nbsp;<label class="uploadBtn" for="uploadFile"></label>'
+                             +'<span style="width:60%;" class="fileName" id="uploadFileName">(선택된 파일 없음)</span>&nbsp;<label class="uploadBtn" for="uploadFile"></label>'
                              +'<input type="file" name="uploadFile" class="upload-hidden" id="uploadFile" accept="image/*" style="display:none;" /><a href="javascript://" class="uploadInit" ></a>'
-                             +'</p></form><p> ※Size: 500*500kb 이내</p><img id="previewPic" url=""/>'
+                             +'</p></form><p> ※Size: 500*500kb 이내</p><img id="previewPic" url=""/ onerror="this.style.display="none;">'
                              +'<img id="previews"/><div id="formResultview"><div id="previewbtn"><center><input id="save_btn" class="btd_btn_result" type="image" src="/images/btd_05.png">'
                              +'<input  class="btd_btn_result popupclose" type="image" src="/images/btd_07.png"></center></div></div></div></div></div></div>'
                              +'<footer><a href="#" class="confirm" id="btn_fileupload"></a><a href="#" class="cancel js-modal-close"></a></footer></div>'; 
         $('#poplayerline').append(createPopLayer);
         $('#fileupload').hide();
         $('.popupclose').click(function(){
-            $('#popLayer').remove();
+            $('#popLayer').fadeOut();
             $('#formSelect').val("1").prop("selected", true);
             $("#uploadFile").val("");
+            $('#popLayer').remove(1);
         });  
         $('.uploadBtn').click(function(){
             $('#dataForm').css("background-color",'');
@@ -62,9 +64,12 @@ $(document).ready(function () {
             $('#rotation').val('');
             var extArr = ['jpg', 'jpeg', 'png', 'gif', 'bmp'];
             var uploadFile = $(this).val();
+            var filename = uploadFile.split('/').pop().split('\\').pop();
+            
             var lastDot = uploadFile.lastIndexOf('.');
             var fileExt = uploadFile.substring(lastDot + 1, uploadFile.length).toLowerCase();
             if ($.inArray(fileExt, extArr) != -1 && $(this).val() != '') {
+                $('#uploadFileName').text(filename)
                 $('#uploadForm').submit();
             } else {
                 $(this).val('');            
@@ -210,9 +215,9 @@ function processImage(url) {
     };
 
     // image url
-    var sourceImageUrl = url;
+    //var sourceImageUrl = url;
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
-    //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
+    var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
     $.ajax({
         url: uriBase + "?" + $.param(params),

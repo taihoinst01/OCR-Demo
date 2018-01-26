@@ -22,7 +22,8 @@ body{background-image:url('/images/bg.png'); background-repeat: no-repeat; heigh
 
 .btd_cancel{width: 20px; float: right;margin-top: 7px;}
 #formSelect{float: right;width: 300px; height: 40px;font-size: 15px;}
-.uploadBtn{background: url('/images/btd_04.png') !important;width: 18%;height: 30px;margin: 5px 2px 2px 150px;display: inline-flex;cursor: pointer;}
+.uploadBtn{background: url('/images/btd_04.png') !important;width: 18%;height: 30px;margin: 5px 2px 2px 0px;display: inline-flex;cursor: pointer;}
 .uploadInit{background: url('/images/btd_06.png') !important;width: 17%;height: 30px;margin: 5px 2px 2px 0;display: inline-flex;}
 #previewbtn{margin-top: 20px;}
 .btd_btn_result {margin: 5px 5px 5px 5px}
+#uploadFileName{margin-right: 10px;}
