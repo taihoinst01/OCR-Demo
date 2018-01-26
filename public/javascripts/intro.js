@@ -10,7 +10,7 @@ $(document).ready(function () {
         return this;
     }
     showPopup = function() {
-    $('#popLayer').fadeIn();
+    
     $("#popLayer").show();
     $("#popLayer").center();
     $('#save_btn').attr("disabled","disabled");
@@ -23,8 +23,8 @@ $(document).ready(function () {
         $('#formSelect').val("1").prop("selected", true);
         $("#uploadFile").val("");
         var createPopLayer = '<div id="popLayer">'
-                             +'<div id="img_uploadV" class="modal_box w600" style="height: 65%">'
-                             +'<header><a href="#"  class="js-modal-close close popupclose">×</a><h3 style="margin: 10px;">Image upload</h3></header>'
+                             +'<div id="img_upload" class="modal_box w600" style="height: 65%;">'
+                             +'<header><a href="#"  class="js-modal-close close popupclose">X</a><h3 style="margin: 10px;">Image upload</h3></header>'
                              +'<div class="modal-body" style=" height: 80%;"><div class="gallery_wrap"><div class="gallery"><div style=" height: 100%">'
                              +'<form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post"><input type="hidden" name="rotation" id="rotation" />'
                              +'<div id="fileupload"><input type="file" name="uploadFile" id="uploadFile" style="display:inline;" /></div><p>'
@@ -36,11 +36,12 @@ $(document).ready(function () {
                              +'<footer><a href="#" class="confirm" id="btn_fileupload"></a><a href="#" class="cancel js-modal-close"></a></footer></div>'; 
         $('#poplayerline').append(createPopLayer);
         $('#fileupload').hide();
+       
         $('.popupclose').click(function(){
-            $('#popLayer').fadeOut();
+            
             $('#formSelect').val("1").prop("selected", true);
             $("#uploadFile").val("");
-            $('#popLayer').remove(1);
+            $('#popLayer').remove();
         });  
         $('.uploadBtn').click(function(){
             $('#dataForm').css("background-color",'');
@@ -215,9 +216,9 @@ function processImage(url) {
     };
 
     // image url
-    //var sourceImageUrl = url;
+    var sourceImageUrl = url;
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
-    var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
+    //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
     $.ajax({
         url: uriBase + "?" + $.param(params),

@@ -17,7 +17,7 @@ body{background-image:url('/images/bg.png'); background-repeat: no-repeat; heigh
 .fontsize{font-size: 30px;float: left; margin-bottom: 40px; color: white;}
 .btd_icon{width: 50px; margin-top: 10px; float: right;}
 .ocrName{margin-left: 100px;}
-#popLayer{display: none;width: 500px;height: 550px;border: 1px solid black; background-color: white;}
+#popLayer{display: none;width: 500px;height: 550px;border: 1px solid black; background-color: white; border-radius: 10px;}
 #previews{background-image:URL('/images/box04.png');width:370px; height:270px; background-size:100% 100%; margin-top: 15px; margin-left: 50px;}
 
 .btd_cancel{width: 20px; float: right;margin-top: 7px;}
@@ -26,4 +26,6 @@ body{background-image:url('/images/bg.png'); background-repeat: no-repeat; heigh
 .uploadInit{background: url('/images/btd_06.png') !important;width: 17%;height: 30px;margin: 5px 2px 2px 0;display: inline-flex;}
 #previewbtn{margin-top: 20px;}
 .btd_btn_result {margin: 5px 5px 5px 5px}
-#uploadFileName{margin-right: 10px;}
+#uploadFileName{display:inline-block;margin-right: 10px;text-overflow: ellipsis;  overflow: hidden; text-overflow: ellipsis;white-space: nowrap;}
+#close_btn{background-image:URL('/images/btd_close.png');}
+
