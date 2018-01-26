@@ -311,9 +311,7 @@ function appendDataForm(data) {
 
 function makeForm(option, lineWordArr, lineLctArr) {
     var appendHtml;
-    for (var i = 0; i < lineWordArr.length; i++) {
-        console.log(i + ' / ' + lineWordArr[i]);
-    }
+
     if (option == 'PACKING LIST') {
         appendHtml = '' +
             '<div style="width:90%; height: 90%; margin: 5%; border:2px solid black;">' +
