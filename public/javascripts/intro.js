@@ -216,8 +216,10 @@ function processImage(url) {
     };
 
     // image url
+
     var sourceImageUrl = url;
     
+
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
@@ -312,6 +314,7 @@ function appendDataForm(data) {
 
 function makeForm(option, lineWordArr, lineLctArr) {
     var appendHtml;
+
     if (option == 'PACKING LIST') {
         appendHtml = '' +
             '<div style="width:90%; height: 90%; margin: 5%; border:2px solid black;">' +
@@ -403,7 +406,7 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '<td><input type="text" style="width:95%; margin-left: 3%;" value=""></td>' +
             '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[46] + '"></td>' +
             '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[60] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[22] + '"></td>' +
+            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[62] + '"></td>' +
             '</tr>' +
             '<tr>' +
             '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[23] + '"></td>' +
