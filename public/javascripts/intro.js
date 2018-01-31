@@ -1,7 +1,16 @@
 ﻿var angleCnt = 0; //이미지 돌리기 횟수
 var resultArr; // select 선택 시 유효성 검사를 위한 text Array
+var fieldArr; // 수정 유무 확인 (필드 단위 배열)
+var fieldCount; // 입력란 개수
+var modifyWord; // 수정된 단어 배열
 
 $(document).ready(function () {
+    //데이터 저장
+    $('#insertData').click(function(e){
+        if($(e.target).attr('src') == '/images/btd_insert.png'){
+            console.log('1');
+        }
+    });
 
     jQuery.fn.center = function () {
         this.css("position","absolute");
@@ -97,7 +106,7 @@ $(document).ready(function () {
             $('#formResult').show();
         } else {
             $('#formResult').hide();
-        }        
+        }
     });*/
 
     $('#uploadForm').submit(function () {
@@ -113,9 +122,10 @@ $(document).ready(function () {
                     
                     $('#save_btn').click(function(){
                         $('#img').attr('src', response);
+                        $('#formSelect').val('COMMERCIAL INVOICE').trigger('change');
                     });
-                    $('#preview').attr('src', response);
-                    processImage(response);                       
+                    $('#preview').attr('src', response);                  
+                    processImage(response);
 
                     //if ($('#rotation').val().length > 0) {
                     //}
@@ -127,16 +137,7 @@ $(document).ready(function () {
       
         return false;
     });
-    /*
-    $('#test1').click(function(){
-        $('#dataForm').css('height','800px');
-        processImage('http://hyjocr.azurewebsites.net/uploads/ocr01.jpg');
-    });
-    $('#test2').click(function(){
-        $('#dataForm').css('height','900px');
-        processImage('http://hyjocr.azurewebsites.net/uploads/ocr02.jpg');
-    });
-    */
+
     $('#insertBtn').click(function () {
         var resultJson = new Array();
         for (var i = 0; i < $('.location').length; i++) {
@@ -216,9 +217,7 @@ function processImage(url) {
     };
 
     // image url
-
     var sourceImageUrl = url;
-    
 
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
@@ -255,8 +254,8 @@ function processImage(url) {
                     
                     $('#img').attr('src', sourceImageUrl);
                     $('#popLayer').remove();
-                });
-               
+                });               
+
             } else {
                 $('#rotation').val('');
                 appendDataForm(data.regions);
@@ -271,6 +270,33 @@ function processImage(url) {
         });
 };
 
+//수정 유무 판단
+function isWordModify(){
+    var isModify = false;
+    modifyWord = new Array();
+    for(var i = 0 ; i < fieldArr.length; i ++){
+        var contentsArr = $('#contents-' + (i+1)).val().replace( /\n/g, ' ').split(' ');
+        var originArr = fieldArr[i].replace( /\n/g, ' ').split(' ');
+        for(var j = 0 ; j < originArr.length; j++){
+            if(originArr[j] != contentsArr[j]){
+                var item = originArr[j] + "::" + contentsArr[j];
+                modifyWord.push(item);
+            }
+        }
+        /*
+        if($('#contents-' + (i+1)).val().replace( /\n/g, '') != fieldArr[i].replace( /\n/g, '')){
+            isModify = true;
+            break;
+        }
+        */
+    }
+
+    if(modifyWord.length > 0 ){
+        isModify = true;
+    }
+
+    return isModify;
+}
 function addTextOfLine(data) {
     resultArr = new Array();
     for (var i = 0; i < data.length; i++) {
@@ -278,7 +304,7 @@ function addTextOfLine(data) {
         for (var j = 0; j < lines.length; j++) {
             var words = lines[j].words;
             var textTmp = '';
-            for (var k = 0; k < words.length; k++) {
+            for (var k = 0; k < words.length; k++) {               
                 textTmp += words[k].text + (k == data[i].lines[j].words.length - 1 ? '' : ' ');
             }
             resultArr.push(textTmp);
@@ -310,6 +336,22 @@ function appendDataForm(data) {
     $('#dataForm').html('');
     formHTML = makeForm(option, lineWordArr, lineLctArr);
     $('#dataForm').append(formHTML);
+
+    // 입력란 배열 저장
+    fieldArr = new Array();
+    $('textarea, input[type=text]').each(function(index, item){       
+        fieldArr.push($(item).val());
+        fieldCount = index;
+    });
+
+    // 입력란 수정 유무 판단
+    $('textarea, input[type=text]').keyup(function(e){
+        if(isWordModify()){
+            $('#insertData').attr('src','/images/btd_insert.png');
+        }else{
+            $('#insertData').attr('src','/images/btd_insert_disable.png');
+        }
+    });
 }
 
 function makeForm(option, lineWordArr, lineLctArr) {
@@ -335,27 +377,27 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '<tr>' +
             '<td colspan="4">' +
             '<b>' + lineWordArr[2] + '</b><br />' +
-            '<textarea style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[3] + '\n' + lineWordArr[5] + '\n' + lineWordArr[6] + '\n' + lineWordArr[7] + '</textarea>' +
+            '<textarea id="contents-1" style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[3] + '\n' + lineWordArr[5] + '\n' + lineWordArr[6] + '\n' + lineWordArr[7] + '</textarea>' +
             '</td>' +
             '<td colspan="4">' +
             '<b>' + lineWordArr[1] + '</b><br />' +
-            '<textarea style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[4] + '</textarea>' +
+            '<textarea id="contents-2" style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[4] + '</textarea>' +
             '</td>' +
             '</tr>' +
             '<tr>' +
             '<td colspan="4">' +
             '<b>' + lineWordArr[8] + '</b><br />' +
-            '<textarea style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[10] + '\n' + lineWordArr[12] + '\n' + lineWordArr[13] + '\n' + lineWordArr[14] + '</textarea>' +
+            '<textarea id="contents-3" style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[10] + '\n' + lineWordArr[12] + '\n' + lineWordArr[13] + '\n' + lineWordArr[14] + '</textarea>' +
             '</td>' +
             '<td colspan="4">' +
             '<b>' + lineWordArr[9] + '</b><br />' +
-            '<textarea style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[11] + '\n' + lineWordArr[42] + '</textarea>' +
+            '<textarea id="contents-4" style="resize: none; width:95%; margin-left: 3%;">' + lineWordArr[11] + '\n' + lineWordArr[42] + '</textarea>' +
             '</td>' +
             '</tr>' +
             '<tr>' +
             '<td colspan="4">' +
             '<b>' + lineWordArr[15] + '</b><br />' +
-            '<input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[16] + '"/>' +
+            '<input id="contents-5" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[16] + '"/>' +
             '</td>' +
             '<td colspan="4">' +
             '<b>' + lineWordArr[43] + '</b><br />' +
@@ -364,22 +406,22 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '<tr>' +
             '<td colspan="2">' +
             '<b>' + lineWordArr[17] + '</b><br />' +
-            '<input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[18] + '"/>' +
+            '<input id="contents-6" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[18] + '"/>' +
             '</td>' +
             '<td colspan="2">' +
             '<b>' + lineWordArr[36] + '</b><br />' +
-            '<input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[37] + '"/>' +
+            '<input id="contents-7" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[37] + '"/>' +
             '</td>' +
             '<td colspan="4" rowspan="2"></td>' +
             '</tr>' +
             '<tr>' +
             '<td colspan="2">' +
             '<b>' + lineWordArr[19] + '</b><br />' +
-            '<input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[20] + '"/>' +
+            '<input id="contents-8" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[20] + '"/>' +
             '</td>' +
             '<td colspan="2">' +
             '<b>' + lineWordArr[38] + '</b><br />' +
-            '<input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[39] + '"/>' +
+            '<input id="contents-9" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[39] + '"/>' +
             '</td>' +
             '</tr>' +
             '<tr>' +
@@ -401,117 +443,117 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '<col style="width: 12.5%" />' +
             '</colgroup>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[22] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[41] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value=""></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[46] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[60] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[62] + '"></td>' +
+            '<td><input id="contents-10" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[22] + '"></td>' +
+            '<td><input id="contents-11" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[41] + '"></td>' +
+            '<td><input id="contents-12" type="text" style="width:95%; margin-left: 3%;" value=""></td>' +
+            '<td><input id="contents-13" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[46] + '"></td>' +
+            '<td><input id="contents-14" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[60] + '"></td>' +
+            '<td><input id="contents-15" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[62] + '"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[23] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[63] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-16" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[23] + '"></td>' +
+            '<td><input id="contents-17" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[63] + '"></td>' +
+            '<td><input id="contents-18" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-19" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-20" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-21" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[24] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[64] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[76] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[47] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-22" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[24] + '"></td>' +
+            '<td><input id="contents-23" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[64] + '"></td>' +
+            '<td><input id="contents-24" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[76] + '"></td>' +
+            '<td><input id="contents-25" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[47] + '"></td>' +
+            '<td><input id="contents-26" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-27" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[25] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[65] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[77] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[48] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-28" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[25] + '"></td>' +
+            '<td><input id="contents-29" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[65] + '"></td>' +
+            '<td><input id="contents-30" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[77] + '"></td>' +
+            '<td><input id="contents-31" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[48] + '"></td>' +
+            '<td><input id="contents-32" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-33" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[26] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[66] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[78] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[49] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-34" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[26] + '"></td>' +
+            '<td><input id="contents-35" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[66] + '"></td>' +
+            '<td><input id="contents-36" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[78] + '"></td>' +
+            '<td><input id="contents-37" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[49] + '"></td>' +
+            '<td><input id="contents-38" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-39" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
 
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[27] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[67] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[79] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[50] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-40" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[27] + '"></td>' +
+            '<td><input id="contents-41" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[67] + '"></td>' +
+            '<td><input id="contents-42" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[79] + '"></td>' +
+            '<td><input id="contents-43" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[50] + '"></td>' +
+            '<td><input id="contents-44" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-45" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[28] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[68] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value=""></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[51] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-46" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[28] + '"></td>' +
+            '<td><input id="contents-47" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[68] + '"></td>' +
+            '<td><input id="contents-48" type="text" style="width:95%; margin-left: 3%;" value=""></td>' +
+            '<td><input id="contents-49" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[51] + '"></td>' +
+            '<td><input id="contents-50" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-51" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[29] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[69] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[80] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[52] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-52" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[29] + '"></td>' +
+            '<td><input id="contents-53" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[69] + '"></td>' +
+            '<td><input id="contents-54" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[80] + '"></td>' +
+            '<td><input id="contents-55" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[52] + '"></td>' +
+            '<td><input id="contents-56" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-57" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[30] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[70] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[81] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[53] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-58" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[30] + '"></td>' +
+            '<td><input id="contents-59" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[70] + '"></td>' +
+            '<td><input id="contents-60" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[81] + '"></td>' +
+            '<td><input id="contents-61" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[53] + '"></td>' +
+            '<td><input id="contents-62" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-63" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[31] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[71] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[82] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[54] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-64" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[31] + '"></td>' +
+            '<td><input id="contents-65" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[71] + '"></td>' +
+            '<td><input id="contents-66" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[82] + '"></td>' +
+            '<td><input id="contents-67" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[54] + '"></td>' +
+            '<td><input id="contents-68" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-69" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[32] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[72] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[83] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[55] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-70" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[32] + '"></td>' +
+            '<td><input id="contents-71" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[72] + '"></td>' +
+            '<td><input id="contents-72" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[83] + '"></td>' +
+            '<td><input id="contents-73" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[55] + '"></td>' +
+            '<td><input id="contents-74" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-75" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[33] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[73] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[84] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[56] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-76" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[33] + '"></td>' +
+            '<td><input id="contents-77" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[73] + '"></td>' +
+            '<td><input id="contents-78" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[84] + '"></td>' +
+            '<td><input id="contents-79" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[56] + '"></td>' +
+            '<td><input id="contents-80" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-81" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[34] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[74] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[85] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[57] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-82" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[34] + '"></td>' +
+            '<td><input id="contents-83" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[74] + '"></td>' +
+            '<td><input id="contents-84" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[85] + '"></td>' +
+            '<td><input id="contents-85" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[57] + '"></td>' +
+            '<td><input id="contents-86" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-87" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[35] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[75] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[86] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[58] + '"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
-            '<td><input type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-88" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[35] + '"></td>' +
+            '<td><input id="contents-89" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[75] + '"></td>' +
+            '<td><input id="contents-90" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[86] + '"></td>' +
+            '<td><input id="contents-91" type="text" style="width:95%; margin-left: 3%;" value="' + lineWordArr[58] + '"></td>' +
+            '<td><input id="contents-92" type="text" style="width:95%; margin-left: 3%;"></td>' +
+            '<td><input id="contents-93" type="text" style="width:95%; margin-left: 3%;"></td>' +
             '</tr>' +
             '</table>' +
             '<br />' +
@@ -527,44 +569,44 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '</div>' +
             '<div style="width:90%; height: 8%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[1] + '</b>' +
-            '<textarea style="resize:none; width:100%;">' + lineWordArr[2] + '\n' + lineWordArr[3] + '\n' + lineWordArr[4] + ' ' + lineWordArr[5] + ' ' + lineWordArr[7] +'</textarea>' +
+            '<textarea id="contents-1" style="resize:none; width:100%;">' + lineWordArr[2] + '\n' + lineWordArr[3] + '\n' + lineWordArr[4] + ' ' + lineWordArr[5] + ' ' + lineWordArr[7] +'</textarea>' +
             '</div>' +
             '<div style="width:90%; height: 8%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[6] + '</b>' +
-            '<textarea style="resize:none; width:100%;">' + lineWordArr[8] + '\n' + lineWordArr[9] + '\n' + lineWordArr[10] + lineWordArr[24] + '</textarea>' +
+            '<textarea id="contents-2" style="resize:none; width:100%;">' + lineWordArr[8] + '\n' + lineWordArr[9] + '\n' + lineWordArr[10] + lineWordArr[24] + '</textarea>' +
             '</div>' +
             '<div style="width:90%; height: 8%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[11] + '</b>' +
-            '<textarea style="resize:none; width:100%;">' + lineWordArr[12] + '</textarea>' +
+            '<textarea id="contents-3" style="resize:none; width:100%;">' + lineWordArr[12] + '</textarea>' +
             '</div>' +
             '<div style="width:90%; height: 5%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<div style="float:left; width:50%; height:100%; border-right: 1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[13] + '</b>' +
-            '<input type="text" style="width:100%;" value="' + lineWordArr[14] + '"/>' +
+            '<input id="contents-4" type="text" style="width:100%;" value="' + lineWordArr[14] + '"/>' +
             '</div>' +
             '<div style="float:left; width:50%; height:100%;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[25] + '</b>' +
-            '<input type="text" style="width:100%;" />' +
+            '<input id="contents-5" type="text" style="width:100%;" />' +
             '</div>' +
             '</div>' +
             '<div style="width:90%; height: 5%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<div style="float:left; width:50%; height:100%; border-right: 1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[15] + '</b>' +
-            '<input type="text" style="width:100%;" value="' + lineWordArr[16] + '""/>' +
+            '<input id="contents-6" type="text" style="width:100%;" value="' + lineWordArr[16] + '""/>' +
             '</div>' +
             '<div style="float:left; width:50%; height:100%;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[26] + '</b>' +
-            '<input type="text" style="width:100%;" value="' + lineWordArr[27] + '"/>' +
+            '<input id="contents-7" type="text" style="width:100%;" value="' + lineWordArr[27] + '"/>' +
             '</div>' +
             '</div>' +
             '<div style="width:90%; height: 5%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<div style="float:left; width:50%; height:100%; border-right: 1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[17] + '</b>' +
-            '<input type="text" style="width:100%;" value="' + lineWordArr[18] + '""/>' +
+            '<input id="contents-8" type="text" style="width:100%;" value="' + lineWordArr[18] + '""/>' +
             '</div>' +
             '<div style="float:left; width:50%; height:100%;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[28] + '</b>' +
-            '<input type="text" style="width:100%;" />' +
+            '<input id="contents-9" type="text" style="width:100%;" />' +
             '</div>' +
             '</div>' +
             '<div style="width:90%; height: 40%; margin: 4px 5% 0 5%; border:1px solid black;">' +
@@ -587,17 +629,17 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '</tr>' +
             '<tr>' +
             '<td>1</td>' +
-            '<td style="text-align:center;"><textarea style="width:90%; height:70px; resize:none;">' + lineWordArr[21] + '\n' + lineWordArr[22] + '\n' + lineWordArr[23] + '\n' + lineWordArr[31] + ' ' + lineWordArr[33] +'</textarea></td>' +
-            '<td style="text-align:center;"><input type="text" style="width:90%;" value="3EA" /></td>' +
-            '<td style="text-align:center;"><input type="text" style="width:90%;" value="" /></td>' +
-            '<td style="text-align:center;"><input type="text" style="width:90%;" value="' + lineWordArr[37] +'" /></td>' +
+            '<td style="text-align:center;"><textarea id="contents-10" style="width:90%; height:70px; resize:none;">' + lineWordArr[21] + '\n' + lineWordArr[22] + '\n' + lineWordArr[23] + '\n' + lineWordArr[31] + ' ' + lineWordArr[33] +'</textarea></td>' +
+            '<td style="text-align:center;"><input id="contents-11" type="text" style="width:90%;" value="3EA" /></td>' +
+            '<td style="text-align:center;"><input id="contents-12" type="text" style="width:90%;" value="" /></td>' +
+            '<td style="text-align:center;"><input id="contents-13" type="text" style="width:90%;" value="' + lineWordArr[37] +'" /></td>' +
             '</tr>' +
             '<tr style="border-top:1px solid black;">' +
             '<th> </th>' +
             '<th style="text-align:center;">TOTAL</th>' +
-            '<td style="text-align:center;"><input type="text" style="width:90%;" value="" /></td>' +
-            '<td style="text-align:center;"><input type="text" style="width:90%;" value="" /></td>' +
-            '<td style="text-align:center;"><input type="text" style="width:90%;" value="' + lineWordArr[38] +'" /></td>' +
+            '<td style="text-align:center;"><input id="contents-14" type="text" style="width:90%;" value="" /></td>' +
+            '<td style="text-align:center;"><input id="contents-15" type="text" style="width:90%;" value="" /></td>' +
+            '<td style="text-align:center;"><input id="contents-16" type="text" style="width:90%;" value="' + lineWordArr[38] +'" /></td>' +
             '</tr>' +
             '</table>' +
             '<br />' +
@@ -619,52 +661,4 @@ function makeForm(option, lineWordArr, lineLctArr) {
     return appendHtml;
 }
     });
-    
-   
-/*
-function appendTable(data) {
-    $('#result > tbody').html('');
-    //resultJson = data;
-    var htmlText = '';
-    for (var i = 0; i < data.length; i++) { // 지역 단위
-        var lines = data[i].lines;
-        for (var j = 0; j < lines.length; j++) { // 라인 단위
-            htmlText += '<tr>';
-            var location = lines[j].boundingBox;
-            var words = lines[j].words;
-            htmlText += '<td class="location">' + location + '</td><td>';
-            htmlText += '<input type="text" class="text" value="';
-            for (var k = 0; k < words.length; k++) { // 각 단어
-                var text = words[k].text;
-                htmlText += text + (k == words.length-1 ? '' : ' ');
-            }
-            htmlText += '"/></td></tr>';
-        }
-    }
-    $('#result > tbody').append(htmlText);
-}
-*/
-/*
-function appendForm(data) {
-    $('#formResult').html('');
-    var htmlText = '';
-    for (var i = 0; i < data.length; i++) { // 지역 단위
-        var lines = data[i].lines;
-        for (var j = 0; j < lines.length; j++) { // 라인 단위
-            htmlText += '<p>';
-            var location = lines[j].boundingBox.split(',');
-            var words = lines[j].words;
-            htmlText += '<input type="text" class="formText" style="position: absolute; left:' + location[0] + 'px; top: ' + location[1]+'px;" value="';
-            for (var k = 0; k < words.length; k++) { // 각 단어
-                var text = words[k].text;
-                htmlText += text + (k == words.length - 1 ? '' : ' ');
-            }
-            htmlText += '"/></td></p>';
-        }
-    }
-    $('#formResult').css('width', $('#preview').width() + 'px');
-    $('#formResult').css('height', $('#preview').height() + 'px');
-    $('#formResult').append(htmlText);
-}
-*/
 
