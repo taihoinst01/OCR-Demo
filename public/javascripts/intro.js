@@ -4,14 +4,20 @@ var fieldArr; // 수정 유무 확인 (필드 단위 배열)
 var fieldCount; // 입력란 개수
 var modifyWord; // 수정된 단어 배열
 
-$(document).ready(function () {
-    //데이터 저장
+$(function () {
+    
+    uploadModal();
+
+    //수정된 데이터 저장
     $('#insertData').click(function(e){
         if($(e.target).attr('src') == '/images/btd_insert.png'){
             console.log('1');
         }
     });
+});
 
+//업로드 modal 및 이벤트 핸들러
+function uploadModal(){
     jQuery.fn.center = function () {
         this.css("position","absolute");
         this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop()) + "px");
@@ -32,20 +38,20 @@ $(document).ready(function () {
         $('#formSelect').val("1").prop("selected", true);
         $("#uploadFile").val("");
         var createPopLayer = '<div id="popLayer">'
-                             +'<div id="img_upload" class="modal_box w600" style="height: 65%;">'
-                             +'<header><a href="#"  class="js-modal-close close popupclose">X</a><h3 style="margin: 10px;">Image upload</h3></header>'
-                             +'<div class="modal-body" style=" height: 80%;"><div class="gallery_wrap"><div class="gallery"><div style=" height: 100%">'
-                             +'<form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post"><input type="hidden" name="rotation" id="rotation" />'
-                             +'<div id="fileupload"><input type="file" name="uploadFile" id="uploadFile" style="display:inline;" /></div><p>'
-                             +'<span style="width:60%;" class="fileName" id="uploadFileName">(선택된 파일 없음)</span>&nbsp;<label class="uploadBtn" for="uploadFile"></label>'
-                             +'<input type="file" name="uploadFile" class="upload-hidden" id="uploadFile" accept="image/*" style="display:none;" /><a href="javascript://" class="uploadInit" ></a>'
-                             +'</p></form><p> ※Size: 500*500kb 이내</p><img id="previewPic" url=""/ onerror="this.style.display="none;">'
-                             +'<img id="previews"/><div id="formResultview"><div id="previewbtn"><center><input id="save_btn" class="btd_btn_result" type="image" src="/images/btd_05.png">'
-                             +'<input  class="btd_btn_result popupclose" type="image" src="/images/btd_07.png"></center></div></div></div></div></div></div>'
-                             +'<footer><a href="#" class="confirm" id="btn_fileupload"></a><a href="#" class="cancel js-modal-close"></a></footer></div>'; 
+                            +'<div id="img_upload" class="modal_box w600" style="height: 65%;">'
+                            +'<header><a href="#"  class="js-modal-close close popupclose">X</a><h3 style="margin: 10px;">Image upload</h3></header>'
+                            +'<div class="modal-body" style=" height: 80%;"><div class="gallery_wrap"><div class="gallery"><div style=" height: 100%">'
+                            +'<form id="uploadForm" enctype="multipart/form-data" action="/upload" method="post"><input type="hidden" name="rotation" id="rotation" />'
+                            +'<div id="fileupload"><input type="file" name="uploadFile" id="uploadFile" style="display:inline;" /></div><p>'
+                            +'<span style="width:60%;" class="fileName" id="uploadFileName">(선택된 파일 없음)</span>&nbsp;<label class="uploadBtn" for="uploadFile"></label>'
+                            +'<input type="file" name="uploadFile" class="upload-hidden" id="uploadFile" accept="image/*" style="display:none;" /><a href="javascript://" class="uploadInit" ></a>'
+                            +'</p></form><p> ※Size: 500*500kb 이내</p><img id="previewPic" url=""/ onerror="this.style.display="none;">'
+                            +'<img id="previews"/><div id="formResultview"><div id="previewbtn"><center><input id="save_btn" class="btd_btn_result" type="image" src="/images/btd_05.png">'
+                            +'<input  class="btd_btn_result popupclose" type="image" src="/images/btd_07.png"></center></div></div></div></div></div></div>'
+                            +'<footer><a href="#" class="confirm" id="btn_fileupload"></a><a href="#" class="cancel js-modal-close"></a></footer></div>'; 
         $('#poplayerline').append(createPopLayer);
         $('#fileupload').hide();
-       
+    
         $('.popupclose').click(function(){
             
             $('#formSelect').val("1").prop("selected", true);
@@ -86,123 +92,68 @@ $(document).ready(function () {
                 alert('파일 형식이 올바르지 않습니다.');
             }
         });
-         //초기화
-     $('.uploadInit').click(function(){
-        $('#uploadFile').text('선택된 파일 없음');
-        $('.upload-hidden').val("");
-        $('input[name=uploadFile]').val("");
-        $('#save_btn').css("opacity","0.5");
-        $('#previews').removeAttr('src');
-        $('#save_btn').attr("disabled","disabled");
-    });
-    /*$('#rotateBtn').click(function () {
-        $('#formResult').hide();
-        $('#result > tbody').html('<tr><td colspan= "2" align= "center" > 대기중..</td ></tr >');
-        $('#uploadForm').submit();
-    });*/
+        //초기화
+        $('.uploadInit').click(function(){
+            $('#uploadFile').text('선택된 파일 없음');
+            $('.upload-hidden').val("");
+            $('input[name=uploadFile]').val("");
+            $('#save_btn').css("opacity","0.5");
+            $('#previews').removeAttr('src');
+            $('#save_btn').attr("disabled","disabled");
+        });
 
-    /*$('#formBtn').click(function () {
-        if ($('#formResult').css('display') == 'none') {
-            $('#formResult').show();
-        } else {
-            $('#formResult').hide();
-        }
-    });*/
+        $('#uploadForm').submit(function () {
+            if ($('#uploadFile').val() != '') {
+                $(this).ajaxSubmit({
+                    error: function (xhr) {
+                        console.log(xhr);
+                        //status('Error: ' + xhr.status);
+                    },
+                    success: function (response) {
+                        $("#formSelect").val('');
+                        $('#previews').attr('src', response);
+                        
+                        $('#save_btn').click(function(){
+                            $('#img').attr('src', response);
+                            $('#formSelect').val('COMMERCIAL INVOICE').trigger('change');
+                        });
+                        $('#preview').attr('src', response);                  
+                        processImage(response);
 
-    $('#uploadForm').submit(function () {
-        if ($('#uploadFile').val() != '') {
-            $(this).ajaxSubmit({
-                error: function (xhr) {
-                    console.log(xhr);
-                    //status('Error: ' + xhr.status);
-                },
-                success: function (response) {
-                    $("#formSelect").val('');
-                    $('#previews').attr('src', response);
+                        //if ($('#rotation').val().length > 0) {
+                        //}
+                    }
+                });
+            } else {
+                alert('파일이 비어 있습니다.');
+            }
+        
+            return false;
+        });
+
+        $('#formSelect').change(function (e) {
+            var option = $("#formSelect option:selected").val();
+            
+            if (option != '1') {
+                if (jQuery.inArray(option, resultArr) != -1) {
+                    var url = $('#img').attr('src');
+                    processImage(url);
+                } else {              
+                    $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
+                    $('#dataForm').css("background-color","");
+                    $("#dataForm").children().remove();
+                    $("#formSelect").val('1');
+    
+                    alert('해당 양식과 일치하지 않습니다.');
                     
-                    $('#save_btn').click(function(){
-                        $('#img').attr('src', response);
-                        $('#formSelect').val('COMMERCIAL INVOICE').trigger('change');
-                    });
-                    $('#preview').attr('src', response);                  
-                    processImage(response);
-
-                    //if ($('#rotation').val().length > 0) {
-                    //}
-                }
-            });
-        } else {
-            alert('파일이 비어 있습니다.');
-        }
-      
-        return false;
+                }    
+            }
+    
+        });
     });
+}
 
-    $('#insertBtn').click(function () {
-        var resultJson = new Array();
-        for (var i = 0; i < $('.location').length; i++) {
-            var item = new Object();
-            item.location = $('.location')[i].firstChild.nodeValue;
-            item.word = $('.text')[i].value;
-            resultJson.push(item);
-        }
-        
-        if (resultJson != null && resultJson != '') {
-            $.ajax({
-                url: '/db/insert',
-                type: 'post',
-                data: JSON.stringify(resultJson),
-                contentType: 'application/json',
-                success: function (data) {
-                    //console.log(data);
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            });
-        } else {
-            alert('결과가 완료되면 저장할 수 있어요');
-        }
-        
-    });
-
-    //image rotation
-    $('.floatLeft').mouseover(function () {
-        if ($('#img').attr('src') != null) {
-            $('#rotBtn').show();
-        }
-    }).mouseout(function () {
-        $('#rotBtn').hide();
-    });
-    $('#rotBtn').click(function (e) {
-        angleCnt++;
-        var angle = 90 * (angleCnt % 4);
-       $('#img').rotate(angle);
-        $('#rotation').val(angle);
-
-    });
-
-    $('#formSelect').change(function (e) {
-        var option = $("#formSelect option:selected").val();
-        
-        if (option != '1') {
-            if (jQuery.inArray(option, resultArr) != -1) {
-                var url = $('#img').attr('src');
-                processImage(url);
-            } else {              
-                $('#dataForm').css("background-image","URL('/images/box02.png')","background-size","100% 100%");
-                $('#dataForm').css("background-color","");
-                $("#dataForm").children().remove();
-                $("#formSelect").val('1');
-
-                alert('해당 양식과 일치하지 않습니다.');
-                
-            }    
-        }
-
-    })
-});
-
+//OCR API 호출
 function processImage(url) {
     
     $('#dataForm').html('');
@@ -217,9 +168,9 @@ function processImage(url) {
     };
 
     // image url
-    var sourceImageUrl = url;
+    //var sourceImageUrl = url;
 
-    //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
+    var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
     $.ajax({
@@ -283,12 +234,6 @@ function isWordModify(){
                 modifyWord.push(item);
             }
         }
-        /*
-        if($('#contents-' + (i+1)).val().replace( /\n/g, '') != fieldArr[i].replace( /\n/g, '')){
-            isModify = true;
-            break;
-        }
-        */
     }
 
     if(modifyWord.length > 0 ){
@@ -297,6 +242,8 @@ function isWordModify(){
 
     return isModify;
 }
+
+//전역변수에 결과값 라인 단위로 저장
 function addTextOfLine(data) {
     resultArr = new Array();
     for (var i = 0; i < data.length; i++) {
@@ -312,8 +259,8 @@ function addTextOfLine(data) {
     }
 }
 
+//ocr 결과 데이터 가공 및 html append
 function appendDataForm(data) {
-    // id : dataForm , tag : div
     var formHTML = '';
     var option = $("#formSelect option:selected").val();
     var lineWordArr = new Array();
@@ -341,7 +288,22 @@ function appendDataForm(data) {
     fieldArr = new Array();
     $('textarea, input[type=text]').each(function(index, item){       
         fieldArr.push($(item).val());
-        fieldCount = index;
+        fieldCount = index + 1;
+    });
+    $('#paramCnt').val(fieldCount);
+
+    $.ajax({
+        url: '/db/insertOrigin',
+        type: 'post',
+        data: $('#data').serializeArray(),
+        success: function (data) {
+            if(data.status != 200){
+                alert('Origin Data insert Fail!');
+            }
+        },
+        error: function (err) {
+            console.log(err);
+        }
     });
 
     // 입력란 수정 유무 판단
@@ -354,6 +316,7 @@ function appendDataForm(data) {
     });
 }
 
+//html 만들기
 function makeForm(option, lineWordArr, lineLctArr) {
     var appendHtml;
 
@@ -569,44 +532,44 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '</div>' +
             '<div style="width:90%; height: 8%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[1] + '</b>' +
-            '<textarea id="contents-1" style="resize:none; width:100%;">' + lineWordArr[2] + '\n' + lineWordArr[3] + '\n' + lineWordArr[4] + ' ' + lineWordArr[5] + ' ' + lineWordArr[7] +'</textarea>' +
+            '<textarea name="contents1" id="contents-1" style="resize:none; width:100%;">' + lineWordArr[2] + '\n' + lineWordArr[3] + '\n' + lineWordArr[4] + ' ' + lineWordArr[5] + ' ' + lineWordArr[7] +'</textarea>' +
             '</div>' +
             '<div style="width:90%; height: 8%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[6] + '</b>' +
-            '<textarea id="contents-2" style="resize:none; width:100%;">' + lineWordArr[8] + '\n' + lineWordArr[9] + '\n' + lineWordArr[10] + lineWordArr[24] + '</textarea>' +
+            '<textarea name="contents2" id="contents-2" style="resize:none; width:100%;">' + lineWordArr[8] + '\n' + lineWordArr[9] + '\n' + lineWordArr[10] + lineWordArr[24] + '</textarea>' +
             '</div>' +
             '<div style="width:90%; height: 8%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[11] + '</b>' +
-            '<textarea id="contents-3" style="resize:none; width:100%;">' + lineWordArr[12] + '</textarea>' +
+            '<textarea name="contents3" id="contents-3" style="resize:none; width:100%;">' + lineWordArr[12] + '</textarea>' +
             '</div>' +
             '<div style="width:90%; height: 5%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<div style="float:left; width:50%; height:100%; border-right: 1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[13] + '</b>' +
-            '<input id="contents-4" type="text" style="width:100%;" value="' + lineWordArr[14] + '"/>' +
+            '<input name="contents4" id="contents-4" type="text" style="width:100%;" value="' + lineWordArr[14] + '"/>' +
             '</div>' +
             '<div style="float:left; width:50%; height:100%;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[25] + '</b>' +
-            '<input id="contents-5" type="text" style="width:100%;" />' +
+            '<input name="contents5" id="contents-5" type="text" style="width:100%;" />' +
             '</div>' +
             '</div>' +
             '<div style="width:90%; height: 5%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<div style="float:left; width:50%; height:100%; border-right: 1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[15] + '</b>' +
-            '<input id="contents-6" type="text" style="width:100%;" value="' + lineWordArr[16] + '""/>' +
+            '<input name="contents6" id="contents-6" type="text" style="width:100%;" value="' + lineWordArr[16] + '""/>' +
             '</div>' +
             '<div style="float:left; width:50%; height:100%;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[26] + '</b>' +
-            '<input id="contents-7" type="text" style="width:100%;" value="' + lineWordArr[27] + '"/>' +
+            '<input name="contents7" id="contents-7" type="text" style="width:100%;" value="' + lineWordArr[27] + '"/>' +
             '</div>' +
             '</div>' +
             '<div style="width:90%; height: 5%; margin: 4px 5% 0 5%; border:1px solid black;">' +
             '<div style="float:left; width:50%; height:100%; border-right: 1px solid black;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[17] + '</b>' +
-            '<input id="contents-8" type="text" style="width:100%;" value="' + lineWordArr[18] + '""/>' +
+            '<input name="contents8" id="contents-8" type="text" style="width:100%;" value="' + lineWordArr[18] + '""/>' +
             '</div>' +
             '<div style="float:left; width:50%; height:100%;">' +
             '<b style="text-decoration: underline;">' + lineWordArr[28] + '</b>' +
-            '<input id="contents-9" type="text" style="width:100%;" />' +
+            '<input name="contents9" id="contents-9" type="text" style="width:100%;" />' +
             '</div>' +
             '</div>' +
             '<div style="width:90%; height: 40%; margin: 4px 5% 0 5%; border:1px solid black;">' +
@@ -629,17 +592,17 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '</tr>' +
             '<tr>' +
             '<td>1</td>' +
-            '<td style="text-align:center;"><textarea id="contents-10" style="width:90%; height:70px; resize:none;">' + lineWordArr[21] + '\n' + lineWordArr[22] + '\n' + lineWordArr[23] + '\n' + lineWordArr[31] + ' ' + lineWordArr[33] +'</textarea></td>' +
-            '<td style="text-align:center;"><input id="contents-11" type="text" style="width:90%;" value="3EA" /></td>' +
-            '<td style="text-align:center;"><input id="contents-12" type="text" style="width:90%;" value="" /></td>' +
-            '<td style="text-align:center;"><input id="contents-13" type="text" style="width:90%;" value="' + lineWordArr[37] +'" /></td>' +
+            '<td style="text-align:center;"><textarea name="contents10" id="contents-10" style="width:90%; height:70px; resize:none;">' + lineWordArr[21] + '\n' + lineWordArr[22] + '\n' + lineWordArr[23] + '\n' + lineWordArr[31] + ' ' + lineWordArr[33] +'</textarea></td>' +
+            '<td style="text-align:center;"><input name="contents11" id="contents-11" type="text" style="width:90%;" value="3EA" /></td>' +
+            '<td style="text-align:center;"><input name="contents12" id="contents-12" type="text" style="width:90%;" value="" /></td>' +
+            '<td style="text-align:center;"><input name="contents13" id="contents-13" type="text" style="width:90%;" value="' + lineWordArr[37] +'" /></td>' +
             '</tr>' +
             '<tr style="border-top:1px solid black;">' +
             '<th> </th>' +
             '<th style="text-align:center;">TOTAL</th>' +
-            '<td style="text-align:center;"><input id="contents-14" type="text" style="width:90%;" value="" /></td>' +
-            '<td style="text-align:center;"><input id="contents-15" type="text" style="width:90%;" value="" /></td>' +
-            '<td style="text-align:center;"><input id="contents-16" type="text" style="width:90%;" value="' + lineWordArr[38] +'" /></td>' +
+            '<td style="text-align:center;"><input name="contents14" id="contents-14" type="text" style="width:90%;" value="" /></td>' +
+            '<td style="text-align:center;"><input name="contents15" id="contents-15" type="text" style="width:90%;" value="" /></td>' +
+            '<td style="text-align:center;"><input name="contents16" id="contents-16" type="text" style="width:90%;" value="' + lineWordArr[38] +'" /></td>' +
             '</tr>' +
             '</table>' +
             '<br />' +
@@ -660,5 +623,4 @@ function makeForm(option, lineWordArr, lineLctArr) {
 
     return appendHtml;
 }
-    });
 
