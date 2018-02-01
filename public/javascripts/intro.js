@@ -7,13 +7,7 @@ var modifyWord; // 수정된 단어 배열
 $(function () {
     
     uploadModal();
-
-    //수정된 데이터 저장
-    $('#insertData').click(function(e){
-        if($(e.target).attr('src') == '/images/btd_insert.png'){
-            console.log('1');
-        }
-    });
+    insertCompleteData();
 });
 
 //업로드 modal 및 이벤트 핸들러
@@ -153,6 +147,42 @@ function uploadModal(){
     });
 }
 
+//수정된 데이터 저장
+function insertCompleteData(){
+    $('#insertData').click(function(e){
+        if($(e.target).attr('src') == '/images/btd_insert.png'){
+            var params = $('#data').serializeArray();
+            var modifyJson = new Array();
+            for(var i = 0 ; i < modifyWord.length; i++){
+                var itemArr = modifyWord[i].split('::');
+                modifyJson.push({
+                    'name' : itemArr[0],
+                    'value' : itemArr[1],
+                });
+            }
+            params[params.length] = {
+                'name' : 'modify',
+                'value' : modifyJson
+            };
+            
+            $.ajax({
+                url: '/db/insertComplete',
+                type: 'post',
+                data: JSON.stringify({'params' : params}),
+                contentType: 'application/json; charset=UTF-8',
+                success: function (data) {
+                    if(data.status != 200){
+                        alert('Complete Data insert Fail!');
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+            
+        }
+    });
+}
 //OCR API 호출
 function processImage(url) {
     
@@ -168,9 +198,9 @@ function processImage(url) {
     };
 
     // image url
-    //var sourceImageUrl = url;
+    var sourceImageUrl = url;
 
-    var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
+    //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/commercial_invoice.jpg';
     //var sourceImageUrl = 'http://ocr-demo.azurewebsites.net/uploads/packing_List.jpg';
     // Perform the REST API call.
     $.ajax({
@@ -310,8 +340,10 @@ function appendDataForm(data) {
     $('textarea, input[type=text]').keyup(function(e){
         if(isWordModify()){
             $('#insertData').attr('src','/images/btd_insert.png');
+            $('#insertData').addClass('clicked');
         }else{
             $('#insertData').attr('src','/images/btd_insert_disable.png');
+            $('#insertData').removeClass('clicked');
         }
     });
 }

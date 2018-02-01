@@ -84,4 +84,94 @@ router.post('/insertOrigin', function (req, res) {
     })
 });
 
+router.post('/insertComplete', function (req, res) {
+    var result = req.body.params;
+
+    var contents1 = result[1].value.split('\r\n');
+    var contents2 = result[2].value.split('\r\n');;
+    var contents3 = result[3].value;
+    var contents4 = result[4].value;
+    var contents5 = result[5].value;
+    var contents6 = result[6].value;
+    var contents7 = result[7].value;
+    var contents8 = result[8].value;
+    var contents9 = result[9].value;
+    var contents10 = result[10].value;
+    var contents11 = result[11].value;
+    var contents12 = result[12].value;
+    var contents13 = result[13].value;
+    var contents14 = result[14].value;
+    var contents15 = result[15].value;
+    var contents16 = result[16].value;
+    var modifyArr = result[17].value;
+    
+    var shpperTelNum = contents1[2].substring(contents1[2].indexOf('TEL')+3, contents1[2].indexOf('FAX')-1);
+    var shpperFaxNum = contents1[2].substring(contents1[2].indexOf('FAX')+3);
+    var consigneeTelNum = contents2[2].substring(contents2[2].indexOf('TEL')+3, contents2[2].indexOf('FAX')-1);
+    var consigneeFaxNum = contents2[2].substring(contents2[2].indexOf('FAX')+3);
+
+    (async () => {
+        try {
+            let pool = await sql.connect(dbConfig);
+            let sqlResult = await pool.request()
+            .input('shpperName', sql.NVarChar, contents1[0].trim())
+            .input('shpperAddress', sql.NVarChar, contents1[1].trim())
+            .input('shpperTel', sql.NVarChar, shpperTelNum.trim())
+            .input('shpperFax', sql.NVarChar, shpperFaxNum.trim())
+            .input('consigneeName', sql.NVarChar, contents2[0].trim())
+            .input('consigneeAddress', sql.NVarChar, contents2[1].trim())
+            .input('consigneeTel', sql.NVarChar, consigneeTelNum.trim())
+            .input('consigneeFax', sql.NVarChar, consigneeFaxNum.trim())
+            .input('notifyParty', sql.NVarChar, contents3.trim())
+            .input('invoiceNo', sql.NVarChar, contents4.trim())
+            .input('dateOfShipment', sql.NVarChar, contents5.trim())
+            .input('portOfLoading', sql.NVarChar, contents6.trim())
+            .input('portOfDischarge', sql.NVarChar, contents7.trim())
+            .input('tonCylinderOrigin', sql.NVarChar, contents8.trim())
+            .input('tonCylinderNumber', sql.NVarChar, contents9.trim())
+            .input('descriptionOfGoods', sql.NVarChar, '')
+            .input('totalQuantity', sql.NVarChar, contents14.split('EA')[0].trim())
+            .input('totalUnitPrice', sql.NVarChar, contents15.trim())
+            .input('totalAmount', sql.NVarChar, contents16.trim())
+            .query(queryConfig.insertCompleteDoc);
+
+            let rows = sqlResult.recordset;
+
+            sqlResult = await pool.request()
+            .query(queryConfig.selectCompleteDocNo);
+            rows = sqlResult.recordset;
+            let docNo = rows[0].docNo;
+
+            sqlResult = await pool.request()
+            .input('docNo', sql.Int, docNo)
+            .input('itemName', sql.NVarChar, contents10.trim())
+            .input('itemQuantity', sql.NVarChar, contents11.split('EA')[0].trim())
+            .input('itemUnitPrice', sql.NVarChar, contents12.trim())
+            .input('itemAmount', sql.NVarChar, contents13.trim())
+            .query(queryConfig.insertCompleteItem);           
+            rows = sqlResult.recordset;
+
+            for(var i = 0 ; i < modifyArr.length; i++){
+                sqlResult = await pool.request()
+                .input('docNo', sql.Int, docNo)
+                .input('origintext', sql.NVarChar, modifyArr[i].name.trim())
+                .input('completeText', sql.NVarChar, modifyArr[i].value.trim())
+                .query(queryConfig.insertCompleteHistory);           
+                rows = sqlResult.recordset;
+            }           
+
+            res.send({'status' : 200});
+        } catch (err) {
+            console.log(err)
+            res.send({'status' : 500});
+        } finally {
+            sql.close();
+        }
+    })()
+
+    sql.on('error', err => {
+    })
+
+});
+
 module.exports = router;

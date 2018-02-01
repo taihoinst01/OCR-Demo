@@ -29,6 +29,9 @@ body{background-image:url('/images/bg.png'); background-repeat: no-repeat; heigh
 #uploadFileName{display:inline-block;margin-right: 10px;text-overflow: ellipsis;  overflow: hidden; text-overflow: ellipsis;white-space: nowrap;}
 #close_btn{background-image:URL('/images/btd_close.png');}
 
+.clicked{
+    cursor: pointer;
+}
 #insertData{float: right; height: 40px;}
 
 
