@@ -23,7 +23,7 @@ function uploadModal(){
     $("#popLayer").show();
     $("#popLayer").center();
     $('#save_btn').attr("disabled","disabled");
-    $('#save_btn').css("opacity","0.5");
+    $('#save_btn').css("opacity","0.5").css('cursor','');
     }
     
     //업로드 모달
@@ -91,7 +91,7 @@ function uploadModal(){
             $('#uploadFile').text('선택된 파일 없음');
             $('.upload-hidden').val("");
             $('input[name=uploadFile]').val("");
-            $('#save_btn').css("opacity","0.5");
+            $('#save_btn').css("opacity","0.5").css('cursor','');
             $('#previews').removeAttr('src');
             $('#save_btn').attr("disabled","disabled");
         });
@@ -231,7 +231,7 @@ function processImage(url) {
                 
                 if ($('#previews').attr('src') != null) {
                 $('#save_btn').removeAttr("disabled");
-                $('#save_btn').css("opacity","1.0");
+                $('#save_btn').css("opacity","1.0").css('cursor','pointer');
                 }
                $('#save_btn').click(function(){
                     
