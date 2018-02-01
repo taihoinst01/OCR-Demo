@@ -31,6 +31,6 @@ body{background-image:url('/images/bg.png'); background-repeat: no-repeat; heigh
 .popupclose{margin-right:10px;}
 
 .clicked{cursor: pointer;}
-#insertData{float: right; height: 40px;}
+#insertData{float: right; height: 40px; border-radius: 5px;}
 
 
