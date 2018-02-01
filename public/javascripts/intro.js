@@ -1,4 +1,4 @@
-﻿var angleCnt = 0; //이미지 돌리기 횟수
+﻿//var angleCnt = 0; //이미지 돌리기 횟수
 var resultArr; // select 선택 시 유효성 검사를 위한 text Array
 var fieldArr; // 수정 유무 확인 (필드 단위 배열)
 var fieldCount; // 입력란 개수
@@ -173,6 +173,8 @@ function insertCompleteData(){
                 success: function (data) {
                     if(data.status != 200){
                         alert('Complete Data insert Fail!');
+                    }else{
+                        alert('수정 완료!');
                     }
                 },
                 error: function (err) {
@@ -629,7 +631,7 @@ function makeForm(option, lineWordArr, lineLctArr) {
             '<td style="text-align:center;"><input name="contents12" id="contents-12" type="text" style="width:90%;" value="" /></td>' +
             '<td style="text-align:center;"><input name="contents13" id="contents-13" type="text" style="width:90%;" value="' + lineWordArr[37] +'" /></td>' +
             '</tr>' +
-            '<tr style="border-top:1px solid black;">' +
+            '<tr id="totalTr" style="border-top:1px solid black;">' +
             '<th> </th>' +
             '<th style="text-align:center;">TOTAL</th>' +
             '<td style="text-align:center;"><input name="contents14" id="contents-14" type="text" style="width:90%;" value="" /></td>' +
